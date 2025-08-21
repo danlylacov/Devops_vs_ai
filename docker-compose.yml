@@ -1,0 +1,39 @@
+version: '3.8'
+
+services:
+  backend:
+    image: danlylacov/devops_vs_ai:backend-latest
+    container_name: backend
+    ports:
+      - "8000:8000"
+    environment:
+      - DATABASE_URL=postgresql://user:password@postgres:5432/tododb
+    depends_on:
+      - postgres
+      - redis
+
+  frontend:
+    image: danlylacov/devops_vs_ai:frontend-latest
+    container_name: frontend
+    ports:
+      - "80:80"
+    depends_on:
+      - backend
+
+  postgres:
+    image: postgres:14
+    environment:
+      - POSTGRES_USER=user
+      - POSTGRES_PASSWORD=password
+      - POSTGRES_DB=tododb
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+  redis:
+    image: redis:6
+    volumes:
+      - redis_data:/data
+
+volumes:
+  postgres_data:
+  redis_data:
